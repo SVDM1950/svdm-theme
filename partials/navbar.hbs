@@ -1,0 +1,29 @@
+<header class="top js-header">
+   <a class="logo" href="{{@website.url}}">
+      {{#if @website.logo}}
+         <img src="{{@website.logo}}" alt="{{@website.name}}" width="{{@website.logoSize.width}}" height="{{@website.logoSize.height}}">
+      {{else}}
+         {{@website.name}}
+      {{/if}}
+   </a>
+   {{#if menus.mainMenu}}
+      {{> menu menus.mainMenu}}
+   {{/if}}
+   {{#if @config.custom.searchFeature}}
+      <div class="search">
+          {{{@customSearchInput}}}
+
+          <button class="clear__btn btn--icon js-clear-btn" aria-label="{{ translate 'search.clear' }}">
+              <svg height="18" width="18" role="presentation" focusable="false">
+                  <use xlink:href="{{@website.assetsUrl}}/svg/svg-map.svg#close"/>
+              </svg>
+          </button>
+
+          <button class="search__btn btn--icon js-search-btn" aria-label="{{ translate 'search.search' }}">
+            <svg height="18" width="18" role="presentation" focusable="false">
+               <use xlink:href="{{@website.assetsUrl}}/svg/svg-map.svg#search"/>
+            </svg>
+         </button>
+      </div>
+   {{/if}}
+</header>
