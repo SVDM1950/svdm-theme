@@ -1,0 +1,114 @@
+{
+    "partials": {
+
+        "menu": {
+            "label": "Menü"
+        },
+
+        "pagination": {
+            "prev": "Vorherige",
+            "next": "Nächste"
+        },
+
+        "shareButtons": {
+            "shareWithFacebook": "Facebook",
+            "shareWithTwitter": "Twitter",
+            "shareWithPinterest": "Pinterest",
+            "shareWithMix": "Mix",
+            "shareWithLinkedIn": "LinkedIn",
+            "shareWithBuffer": "Buffer",
+            "shareWithWhatsApp": "WhatsApp"
+        },
+
+        "footer": {
+            "backToTop": "Zurück nach oben",
+            "followFacebook": "Facebook",
+            "followX": "X",
+            "followInstagram": "Instagram",
+            "followLinkedIn": "LinkedIn",
+            "followVimeo": "Vimeo",
+            "followPinterest": "Pinterest",
+            "followYoutube": "Youtube"
+        }
+    },
+
+    "post": {
+        "publishedBy": "Von",
+        "relatedPosts": "Das sollten Sie auch lesen:",
+        "readMore": "Weiterlesen...",
+        "lastUpdatedDate": "Dieser Artikel wurde aktualisiert am",
+        "comments": "Kommentare",
+        "previousPost": "Vorherig",
+        "nextPost": "Nächste",
+        "shareIt": "Teilen"
+    },
+
+    "page": {
+        "childPages": "Unterseiten"
+    },
+
+    "tags": {
+        "tagsPageTitle": "Tags",
+        "description": "Sammlung von allen %s Tags",
+        "featuringPosts": "Mit %s Beiträgen"
+    },
+
+    "author": {
+        "visitWebsite": "Webseite besuchen"
+    },
+
+    "error": {
+        "404": "404",
+        "message": "Die Seite, die Sie gesucht haben, scheint verschoben, gelöscht oder nicht vorhanden zu sein. Sie können zurückgehen, wo Sie waren, oder direkt zu unserer Startseite gehen.",
+        "button": "Zur Startseite"
+    },
+
+    "search": {
+        "placeholder": "suchen...",
+        "search": "Suche",
+        "close": "Schließen",
+        "title": "Suche",
+        "submit": "Absenden",
+        "clear": "Löschen"
+    },
+
+    "contact": {
+        "title": "Kontakt",
+        "menu": {
+            "label": "Kontakt",
+            "title": "Kontakt",
+            "slug": "kontakt"
+        },
+        "form": {
+            "fields": {
+                "name": "Name",
+                "email": "E-Mail",
+                "subject": "Betreff",
+                "message": "Nachricht",
+                "send": "Senden"
+            },
+            "success": "Vielen Dank für Ihre Nachricht. Wir werden uns in Kürze mit Ihnen in Verbindung setzen.",
+            "errors": {
+                "general": "Beim Versenden der Nachricht ist ein Fehler aufgetreten",
+                "mail": "Beim Versenden der Nachricht ist ein Fehler aufgetreten",
+                "recaptcha": "Fehler während des Google reCAPTCHA-Verifizierungsprozesses",
+                "name": {
+                    "required": "Der Name wird benötigt",
+                    "min-length": "Der Name muss mindestens :value Zeichen lang sein"
+                },
+                "email": {
+                    "required": "Die E-Mail-Adresse wird benötigt",
+                    "invalid": "Die E-Mail-Adresse ist nicht gültig"
+                },
+                "subject": {
+                    "required": "Der Betreff wird benötigt",
+                    "min-length": "Der Betreff muss mindestens :value Zeichen lang sein"
+                },
+                "message": {
+                    "required": "Eine Nachricht wird benötigt",
+                    "min-length": "Die Nachricht muss mindestens :value Zeichen lang sein"
+                }
+            }
+        }
+    }
+}

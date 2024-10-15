@@ -1,0 +1,198 @@
+{{> head}}
+{{> navbar}}
+<main class="page page--contact">
+    <div class="content contact-page">
+        <div class="hero {{#checkIfNone featuredImage.url}}hero--noimage{{/checkIfNone}}">
+            <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
+                <div class="wrapper">
+                    <h1>
+                        {{ translate 'contact.title' }}
+                    </h1>
+                </div>
+            </header>
+        </div>
+
+        <div class="entry-wrapper content__entry">
+            <form action="{{ @plugins.simpleContactForm.config.script }}" method="post" id="contact-form">
+                <p><label for="name">{{ translate 'contact.form.fields.name' }}</label><input type="text" id="name" name="name" placeholder="{{ translate 'contact.form.fields.name' }}"/></p>
+                <p><label for="email">{{ translate 'contact.form.fields.email' }}</label><input type="email" id="email" name="email" placeholder="{{ translate 'contact.form.fields.email' }}"/></p>
+                <p><label for="subject">{{ translate 'contact.form.fields.subject' }}</label><input type="text" id="subject" name="subject" placeholder="{{ translate 'contact.form.fields.subject' }}"/></p>
+                <p><label for="message">{{ translate 'contact.form.fields.message' }}</label><textarea id="message" name="message" placeholder="{{ translate 'contact.form.fields.message' }}"></textarea></p>
+                <p><button type="submit">{{ translate 'contact.form.fields.send' }}</button></p>
+            </form>
+
+{{#if @plugins.simpleContactForm.config.recaptcha }}
+            <script src="https://www.google.com/recaptcha/enterprise.js?render={{ @plugins.simpleContactForm.config.recaptchaSiteKey }}"></script>
+{{/if}}
+            <script src="{{ js "jquery.min.js" }}"></script>
+            <script src="{{ js "toastr.min.js" }}"></script>
+            <script src="{{ js "just-validate.production.min.js" }}"></script>
+            <script>
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-center",
+                    "preventDuplicates": true,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "swing",
+                    "showMethod": "slideDown",
+                    "hideMethod": "slideUp"
+                }
+
+                const validation = new window.JustValidate(
+                    '#contact-form',
+                    {
+                        tooltip: {
+                            position: 'bottom',
+                        },
+                        validateBeforeSubmitting: true
+                    }
+                );
+
+                validation
+                    .addField('#name', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'contact.form.errors.name.required' }}',
+                        },
+                        {
+                            rule: 'minLength',
+                            value: 3,
+                            errorMessage: '{{ translate 'contact.form.errors.name.min-length' }}',
+                        },
+                    ])
+                    .addField('#email', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'contact.form.errors.email.required' }}',
+                        },
+                        {
+                            rule: 'email',
+                            errorMessage: '{{ translate 'contact.form.errors.email.invalid' }}',
+                        },
+                    ])
+                    .addField('#subject', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'contact.form.errors.subject.required' }}',
+                        },
+                        {
+                            rule: 'minLength',
+                            value: 10,
+                            errorMessage: '{{ translate 'contact.form.errors.subject.min-length' }}',
+                        },
+                    ])
+                    .addField('#message', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'contact.form.errors.message.required' }}',
+                        },
+                        {
+                            rule: 'minLength',
+                            value: 10,
+                            errorMessage: '{{ translate 'contact.form.errors.message.min-length' }}',
+                        },
+                    ])
+                    .onSuccess(async event => {
+                        const form = event.currentTarget;
+                        const url = '{{ @plugins.simpleContactForm.config.script }}'
+                        const data = {
+                            "name": form.elements.name.value,
+                            "email": form.elements.email.value,
+                            "subject": form.elements.subject.value,
+                            "message": form.elements.message.value
+                        };
+{{#if @plugins.simpleContactForm.config.recaptcha }}
+                        grecaptcha.enterprise.ready(async () => {
+                            data["{{ @plugins.simpleContactForm.config.recaptchaParameterName }}"] = await grecaptcha.enterprise.execute('{{ @plugins.simpleContactForm.config.recaptchaSiteKey }}', {action: '{{ @plugins.simpleContactForm.config.recaptchaActionName }}'});
+{{/if}}
+                            try {
+                                const fetchResponse = await fetch(
+                                        url,
+                                        {
+                                            method: 'POST',
+                                            headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify(data)
+                                        }
+                                );
+
+                                if(!fetchResponse.ok) {
+                                    const result = await fetchResponse.json();
+
+                                    switch (result.type) {
+                                        case 'validation':
+                                            let errors = {};
+                                            const messages = {
+                                                'name': {
+                                                    'required': '{{ translate 'contact.form.errors.name.required' }}',
+                                                    'length': '{{ translate 'contact.form.errors.name.min-length' }}'
+                                                },
+                                                'email': {
+                                                    'required': '{{ translate 'contact.form.errors.email.required' }}',
+                                                    'invalid': '{{ translate 'contact.form.errors.email.invalid' }}'
+                                                },
+                                                'subject': {
+                                                    'required': '{{ translate 'contact.form.errors.subject.required' }}',
+                                                    'length': '{{ translate 'contact.form.errors.subject.min-length' }}'
+                                                },
+                                                'message': {
+                                                    'required': '{{ translate 'contact.form.errors.message.required' }}',
+                                                    'length': '{{ translate 'contact.form.errors.message.min-length' }}'
+                                                },
+                                            };
+
+                                            if ('g-recaptcha-response' in result.errors) {
+                                                delete result.errors['g-recaptcha-response']
+                                                toastr.error('{{ translate 'contact.form.errors.recaptcha' }}');
+                                            }
+
+                                            for (const [key, value] of Object.entries(result.errors)) {
+                                                errors[`#${key}`] = messages[key][value];
+                                            }
+                                            validation.showErrors(errors);
+                                            return;
+
+                                        case 'general':
+                                            toastr.error('{{ translate 'contact.form.errors.general' }}');
+                                            return;
+
+                                        case 'mail':
+                                            toastr.error('{{ translate 'contact.form.errors.mail' }}');
+                                            return;
+                                        case 'recaptcha':
+                                            toastr.error('{{ translate 'contact.form.errors.recaptcha' }}');
+                                            return;
+                                    }
+
+                                }
+                            } catch (exception) {
+                                toastr.error('{{ translate 'contact.form.errors.general' }}');
+                                return;
+                            }
+
+                            for(element in form.elements) {
+                                if(form.elements[element].type !== 'submit') {
+                                    form.elements[element].value = '';
+                                }
+                            }
+                            toastr.success('{{ translate 'contact.form.success' }}');
+{{#if @plugins.simpleContactForm.config.recaptcha }}
+                        });
+{{/if}}
+                    })
+                ;
+            </script>
+        </div>
+    </div>
+</main>
+{{> footer}}
