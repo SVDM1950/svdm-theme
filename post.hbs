@@ -4,26 +4,52 @@
    {{#post}}
       <article class="content">
          <div class="hero {{#checkIfNone @config.custom.uploadHero '&&' featuredImage.url}}hero--noimage{{/checkIfNone}}">
-            {{#if @config.custom.uploadHero}}
-               <figure class="hero__image">
-                  <div class="hero__image-wrapper">
-                     <img
-                        src="{{@config.custom.uploadHero}}"
-                        {{#if @config.site.responsiveImages}}
-                           {{responsiveImageAttributes @config.custom.uploadHero}}
-                        {{/if}}
-                        {{ lazyload "eager" }}
-                        {{imageDimensions @config.custom.uploadHero}}
-                        alt="{{@config.custom.uploadHeroAlt}}">
-                     </div>
+            {{#featuredImage}}
+            {{#if url}}
+                <figure class="hero__image">
+                    <div class="hero__image-wrapper">
+                        <img
+                                src="{{url}}"
+                            {{#if @config.site.responsiveImages}}
+                                {{responsiveImageAttributes 'featuredImage' srcset.hero sizes.hero}}
+                            {{/if}}
+                            {{ lazyload "eager" }}
+                                height="{{height}}"
+                                width="{{width}}"
+                                alt="{{alt}}">
+                    </div>
 
-                  {{#if @config.custom.uploadHeroCaption}}
-                     <figcaption>
-                        {{@config.custom.uploadHeroCaption}}
-                     </figcaption>
-                  {{/if}}
-               </figure>
+                    {{#checkIfAny caption credits}}
+                        <figcaption>
+                            {{caption}}
+                            {{credits}}
+                        </figcaption>
+                    {{/checkIfAny}}
+                </figure>
+            {{else}}
+                {{#if @config.custom.uploadHero}}
+                    <figure class="hero__image">
+                        <div class="hero__image-wrapper">
+                            <img
+                                    src="{{@config.custom.uploadHero}}"
+                                {{#if @config.site.responsiveImages}}
+                                    {{responsiveImageAttributes @config.custom.uploadHero}}
+                                {{/if}}
+                                {{ lazyload "eager" }}
+                                {{imageDimensions @config.custom.uploadHero}}
+                                    alt="{{@config.custom.uploadHeroAlt}}">
+                        </div>
+
+                        {{#if @config.custom.uploadHeroCaption}}
+                            <figcaption>
+                                {{@config.custom.uploadHeroCaption}}
+                            </figcaption>
+                        {{/if}}
+                    </figure>
+                {{/if}}
             {{/if}}
+            {{/featuredImage}}
+
 
             {{#if @config.custom.textHero}}
                <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
@@ -32,31 +58,6 @@
                   </div>
               </header>
             {{/if}}
-
-            {{#featuredImage}}
-               {{#if url}}
-                  <figure class="hero__image">
-                     <div class="hero__image-wrapper">
-                        <img
-                           src="{{url}}"
-                           {{#if @config.site.responsiveImages}}
-                              {{responsiveImageAttributes 'featuredImage' srcset.hero sizes.hero}}
-                           {{/if}}
-                           {{ lazyload "eager" }}
-                           height="{{height}}"
-                           width="{{width}}"
-                           alt="{{alt}}">
-                        </div>
-
-                     {{#checkIfAny caption credits}}
-                        <figcaption>
-                           {{caption}}
-                           {{credits}}
-                        </figcaption>
-                     {{/checkIfAny}}
-                  </figure>
-               {{/if}}
-            {{/featuredImage}}
 
             <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
                <div class="wrapper">
