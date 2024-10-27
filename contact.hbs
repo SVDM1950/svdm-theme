@@ -2,17 +2,43 @@
 {{> navbar}}
 <main class="page page--contact">
     <div class="content contact-page">
-        <div class="hero {{#checkIfNone featuredImage.url}}hero--noimage{{/checkIfNone}}">
+        <div class="hero {{#checkIfNone contact.featuredImage.url}}hero--noimage{{/checkIfNone}}">
+            {{#contact.featuredImage}}
+                {{#if url}}
+                    <figure class="hero__image">
+                        <div class="hero__image-wrapper">
+                            <img
+                                    src="{{url}}"
+                                {{#if @config.site.responsiveImages}}
+                                    {{responsiveImageAttributes 'featuredImage' srcset.hero sizes.hero}}
+                                {{/if}}
+                                {{ lazyload "eager" }}
+                                    height="{{height}}"
+                                    width="{{width}}"
+                                    alt="{{alt}}">
+                        </div>
+
+                        {{#checkIfAny caption credits}}
+                            <figcaption>
+                                {{caption}}
+                                {{credits}}
+                            </figcaption>
+                        {{/checkIfAny}}
+                    </figure>
+                {{/if}}
+            {{/contact.featuredImage}}
+
             <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
                 <div class="wrapper">
-                    <h1>
-                        {{ translate 'contact.title' }}
-                    </h1>
+                    <h1>{{ translate 'contact.title' }}</h1>
                 </div>
             </header>
         </div>
 
         <div class="entry-wrapper content__entry">
+            {{#if contact.text}}
+                {{{contact.text}}}
+            {{/if}}
             <form action="{{ @plugins.simpleContactForm.config.script }}" method="post" id="contact-form">
                 <p><label for="name">{{ translate 'contact.form.fields.name' }}</label><input type="text" id="name" name="name" placeholder="{{ translate 'contact.form.fields.name' }}"/></p>
                 <p><label for="email">{{ translate 'contact.form.fields.email' }}</label><input type="email" id="email" name="email" placeholder="{{ translate 'contact.form.fields.email' }}"/></p>
