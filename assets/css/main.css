@@ -1202,6 +1202,12 @@ textarea {
   font-size: 1.066666667rem;
   vertical-align: top;
 }
+.hero__content nav.wrapper a {
+  color: var(--gray);
+}
+.hero__content nav.wrapper a:hover {
+  color: var(--link-color);
+}
 .hero__content--centered {
   text-align: center;
 }

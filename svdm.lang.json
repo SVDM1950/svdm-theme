@@ -40,7 +40,8 @@
         "comments": "Comments",
         "previousPost": "Previous",
         "nextPost": "Next",
-        "shareIt": "Share It"
+        "shareIt": "Share It",
+        "backToPosts": "← Back to overview"
     },
 
     "page": {

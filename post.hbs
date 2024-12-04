@@ -50,16 +50,14 @@
             {{/if}}
             {{/featuredImage}}
 
-
-            {{#if @config.custom.textHero}}
-               <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
-                  <div class="wrapper">
-                     {{{@config.custom.textHero}}}
-                  </div>
-              </header>
-            {{/if}}
-
             <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
+                <nav class="wrapper">
+                    <p>
+                        <a href="{{getPostIndexUrl}}">
+                            {{ translate 'post.backToPosts' }}
+                        </a>
+                    </p>
+                </nav>
                <div class="wrapper">
                   <h1>{{title}}</h1>
                    {{#checkIfAny @config.post.displayAuthor @config.post.displayDate}}
