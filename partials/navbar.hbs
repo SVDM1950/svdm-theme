@@ -1,10 +1,9 @@
 <header class="top js-header">
-   <a class="logo" href="{{@website.url}}">
-      {{#if @website.logo}}
-         <img src="{{@website.logo}}" alt="{{@website.name}}" width="{{@website.logoSize.width}}" height="{{@website.logoSize.height}}">
-      {{else}}
-         {{@website.name}}
-      {{/if}}
+    <a class="logo" href="{{@website.url}}">
+{{#if @website.logo}}
+        <img src="{{@website.logo}}" alt="{{@website.name}}" width="{{@website.logoSize.width}}" height="{{@website.logoSize.height}}">
+{{/if}}
+     <h1>{{@website.name}}</h1>
    </a>
    {{#if menus.mainMenu}}
       {{> menu menus.mainMenu}}

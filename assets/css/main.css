@@ -631,6 +631,8 @@ textarea {
   font-variation-settings: "wght" var(--font-weight-bold);
   margin-right: auto;
   order: 1;
+  display: flex;
+  align-items: center;
 }
 .logo > img {
   height: var(--navbar-height);
@@ -638,6 +640,15 @@ textarea {
      object-fit: contain;
   padding: calc(var(--baseline) * 2) 0;
   width: auto;
+}
+.logo h1 {
+  margin: 0 0 0 30px;
+  font-size: clamp(1.2136296308rem, 1.2136296308rem + 0.4621997101 * (100vw - 20rem) / 70, 1.6758293408rem);
+}
+@media all and (max-width: 1378px) {
+  .logo h1 {
+    display: none;
+  }
 }
 
 .search {
