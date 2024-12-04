@@ -2242,3 +2242,77 @@ textarea {
     margin-right: calc(var(--baseline) * 2);
   }
 }
+
+
+@media all and (max-width: 767px) {
+  .page--tickets button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .page--tickets label {
+    margin-bottom: calc(var(--baseline) * 2);
+  }
+
+  .page--tickets label span {
+    display: table;
+    font-size: 0.7241964329rem;
+  }
+
+  .page--tickets input,
+  .page--tickets select,
+  .page--tickets textarea {
+    margin-bottom: calc(var(--baseline) * 2);
+  }
+
+  .page--tickets select:not([multiple]) {
+    background-position-x: 95%;
+    padding-right: calc(var(--baseline) * 6);
+  }
+}
+@media all and (min-width: 768px) {
+  .page--tickets form p {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .page--tickets label {
+    flex: 1;
+    margin-right: calc(var(--baseline) * 2);
+  }
+
+  .page--tickets label span {
+    display: table;
+    font-size: 0.7241964329rem;
+  }
+
+  .page--tickets input,
+  .page--tickets select,
+  .page--tickets textarea {
+    flex: 5;
+    height: calc(var(--baseline) * 9);
+    margin-right: calc(var(--baseline) * 2);
+  }
+
+  .page--tickets select:not([multiple]) {
+    background-position-x: 98%;
+    padding-right: calc(var(--baseline) * 3);
+  }
+
+  .page--tickets textarea {
+    height: calc(var(--baseline) * 27);
+  }
+
+  .page--tickets .form--tickets label {
+    flex: 5;
+  }
+
+  .page--tickets .form--tickets input,
+  .page--tickets .form--tickets select,
+  .page--tickets .form--tickets textarea {
+    flex: 1;
+  }
+}

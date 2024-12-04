@@ -1,0 +1,295 @@
+{{> head}}
+{{> navbar}}
+<main class="page page--tickets">
+    <div class="content tickets-page">
+        <div class="hero {{#checkIfNone tickets.featuredImage.url}}hero--noimage{{/checkIfNone}}">
+            {{#tickets.featuredImage}}
+                {{#if url}}
+                    <figure class="hero__image">
+                        <div class="hero__image-wrapper">
+                            <img
+                                    src="{{url}}"
+                                {{#if @config.site.responsiveImages}}
+                                    {{responsiveImageAttributes 'featuredImage' srcset.hero sizes.hero}}
+                                {{/if}}
+                                {{ lazyload "eager" }}
+                                    height="{{height}}"
+                                    width="{{width}}"
+                                    alt="{{alt}}">
+                        </div>
+
+                        {{#checkIfAny caption credits}}
+                            <figcaption>
+                                {{caption}}
+                                {{credits}}
+                            </figcaption>
+                        {{/checkIfAny}}
+                    </figure>
+                {{/if}}
+            {{/tickets.featuredImage}}
+
+            <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
+                <div class="wrapper">
+                    <h1>{{ translate 'tickets.title' }}</h1>
+                </div>
+            </header>
+        </div>
+
+        <div class="entry-wrapper content__entry">
+            {{#if tickets.text}}
+                {{{tickets.text}}}
+            {{/if}}
+            <form action="{{ @plugins.simpleTicketsForm.config.script }}" method="post" id="tickets-form">
+                <p><label for="name">{{ translate 'tickets.form.fields.name' }}</label><input type="text" id="name" name="name" placeholder="{{ translate 'tickets.form.fields.name' }}"/></p>
+                <p><label for="email">{{ translate 'tickets.form.fields.email' }}</label><input type="email" id="email" name="email" placeholder="{{ translate 'tickets.form.fields.email' }}"/></p>
+                <p>
+                    <label for="event">{{ translate 'tickets.form.fields.event' }}</label>
+                    <select id="event" name="event">
+                        <option></option>
+                    {{#each tickets.events}}
+                        <option value="{{id}}"{{#checkIfAny sold closed}} disabled{{/checkIfAny}}>{{ date datetime 'llll' }} - {{name}}{{#if sold }} (ausverrkauft){{/if}}</option>
+                    {{/each}}
+                    </select>
+                </p>
+                <p><label for="message">{{ translate 'tickets.form.fields.message' }}</label><textarea id="message" name="message" placeholder="{{ translate 'tickets.form.fields.message' }}"></textarea></p>
+                <h2 class="h5">{{ translate 'tickets.form.headline.tickets' }}</h2>
+                <div class="form--tickets">
+                {{#each tickets.tickets}}
+                    <p>
+                    <label for="ticket_{{id}}">{{ name }} €{{ price }}{{#if note }}<span>{{ note }}</span>{{/if}}</label>
+                        <input type="number" id="ticket_{{id}}" name="ticket[{{id}}]" min="0" value="0" />
+                    </p>
+                {{/each}}
+                </div>
+                <p><button type="submit">{{ translate 'tickets.form.fields.send' }}</button></p>
+            </form>
+
+{{#if @plugins.simpleTicketsForm.config.recaptcha }}
+            <script src="https://www.google.com/recaptcha/enterprise.js?render={{ @plugins.simpleTicketsForm.config.recaptchaSiteKey }}"></script>
+{{/if}}
+            <script src="{{ js "jquery.min.js" }}"></script>
+            <script src="{{ js "toastr.min.js" }}"></script>
+            <script src="{{ js "just-validate.production.min.js" }}"></script>
+            <script>
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-center",
+                    "preventDuplicates": true,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "swing",
+                    "showMethod": "slideDown",
+                    "hideMethod": "slideUp"
+                }
+
+                const validation = new window.JustValidate(
+                    '#tickets-form',
+                    {
+                        tooltip: {
+                            position: 'bottom',
+                        },
+                        validateBeforeSubmitting: true
+                    }
+                );
+
+                const ticketValidator = (value, fields) => {
+                    if (true
+                    {{#each tickets.tickets}}
+                        && fields['#ticket_{{id}}']
+                        && fields['#ticket_{{id}}'].elem
+                    {{/each}}
+                    ) {
+                        return [
+                            {{#each tickets.tickets}}
+                                parseInt(fields['#ticket_{{id}}'].elem.value),
+                            {{/each}}
+                        ].reduce((sum, value) => sum + value, 0) > 0;
+                    }
+
+                    return true;
+                };
+
+                validation
+                    .addField('#name', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'tickets.form.errors.name.required' }}',
+                        },
+                        {
+                            rule: 'minLength',
+                            value: 3,
+                            errorMessage: '{{ translate 'tickets.form.errors.name.min-length' }}',
+                        },
+                    ])
+                    .addField('#email', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'tickets.form.errors.email.required' }}',
+                        },
+                        {
+                            rule: 'email',
+                            errorMessage: '{{ translate 'tickets.form.errors.email.invalid' }}',
+                        },
+                    ])
+                    .addField('#event', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'tickets.form.errors.event.required' }}',
+                        },
+                    ])
+                    .addField('#message', [
+                        {
+                            rule: 'minLength',
+                            value: 10,
+                            errorMessage: '{{ translate 'tickets.form.errors.message.min-length' }}',
+                        },
+                    ])
+                    {{#each tickets.tickets}}
+                    .addField('#ticket_{{id}}', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'tickets.form.errors.tickets.required' }}',
+                        },
+                        {
+                            rule: 'integer',
+                            errorMessage: '{{ translate 'tickets.form.errors.tickets.integer' }}',
+                        },
+                        {
+                            rule: 'minNumber',
+                            value: 0,
+                            errorMessage: '{{ translate 'tickets.form.errors.tickets.min-number' }}',
+                        }
+                    ])
+                    .addField('.form--tickets', [
+                        {
+                            validator: ticketValidator,
+                            errorMessage: '{{ translate 'tickets.form.errors.tickets.least-one' }}',
+                        }
+                    ],
+                    {
+                        tooltip: {
+                            position: 'top',
+                        },
+                    })
+                    {{/each}}
+                    .onSuccess(async event => {
+                        const form = event.currentTarget;
+                        const url = '{{ @plugins.simpleTicketsForm.config.script }}'
+                        const data = {
+                            "name": form.elements.name.value,
+                            "email": form.elements.email.value,
+                            "message": form.elements.message.value,
+                            "event": form.elements.event.value,
+                            "tickets": {
+                            {{#each tickets.tickets}}
+                                "{{id}}": form.elements['ticket_{{id}}'].value,
+                            {{/each}}
+                            }
+                        };
+{{#if @plugins.simpleTicketsForm.config.recaptcha }}
+                        grecaptcha.enterprise.ready(async () => {
+                            data["{{ @plugins.simpleTicketsForm.config.recaptchaParameterName }}"] = await grecaptcha.enterprise.execute('{{ @plugins.simpleTicketsForm.config.recaptchaSiteKey }}', {action: '{{ @plugins.simpleTicketsForm.config.recaptchaActionName }}'});
+{{/if}}
+                            try {
+                                const fetchResponse = await fetch(
+                                        url,
+                                        {
+                                            method: 'POST',
+                                            headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify(data)
+                                        }
+                                );
+
+                                if(!fetchResponse.ok) {
+                                    const result = await fetchResponse.json();
+
+                                    switch (result.type) {
+                                        case 'validation':
+                                            let errors = {};
+                                            const messages = {
+                                                'name': {
+                                                    'required': '{{ translate 'tickets.form.errors.name.required' }}',
+                                                    'min': '{{ translate 'tickets.form.errors.name.min-length' }}'
+                                                },
+                                                'email': {
+                                                    'required': '{{ translate 'tickets.form.errors.email.required' }}',
+                                                    'invalid': '{{ translate 'tickets.form.errors.email.invalid' }}'
+                                                },
+                                                'event': {
+                                                    'required': '{{ translate 'tickets.form.errors.event.required' }}'
+                                                },
+                                                'message': {
+                                                    'min': '{{ translate 'tickets.form.errors.message.min-length' }}'
+                                                },
+                                                'tickets': {
+                                                    'required': '{{ translate 'tickets.form.errors.tickets.required' }}',
+                                                    'integer': '{{ translate 'tickets.form.errors.tickets.integer' }}',
+                                                    'min': '{{ translate 'tickets.form.errors.tickets.min-number' }}',
+                                                    'least': '{{ translate 'tickets.form.errors.tickets.least-one' }}',
+                                                    'invalid': '{{ translate 'tickets.form.errors.tickets.invalid' }}'
+                                                },
+                                            };
+
+                                            if ('g-recaptcha-response' in result.errors) {
+                                                delete result.errors['g-recaptcha-response']
+                                                toastr.error('{{ translate 'tickets.form.errors.recaptcha' }}');
+                                            }
+
+                                            for (const [key, value] of Object.entries(result.errors)) {
+                                                errors[`#${key}`] = messages[key][value];
+                                            }
+                                            validation.showErrors(errors);
+                                            return;
+
+                                        case 'general':
+                                            toastr.error('{{ translate 'tickets.form.errors.general' }}');
+                                            return;
+
+                                        case 'mail':
+                                            toastr.error('{{ translate 'tickets.form.errors.mail' }}');
+                                            return;
+                                        case 'recaptcha':
+                                            toastr.error('{{ translate 'tickets.form.errors.recaptcha' }}');
+                                            return;
+
+                                        default:
+                                            toastr.error('{{ translate 'tickets.form.errors.general' }}');
+                                            return;
+                                    }
+
+                                }
+                            } catch (exception) {
+                                toastr.error('{{ translate 'tickets.form.errors.general' }}');
+                                return;
+                            }
+
+                            for(element in form.elements) {
+                                if(form.elements[element].type !== 'submit') {
+                                    if(form.elements[element].type === 'number') {
+                                        form.elements[element].value = 0;
+                                    } else {
+                                        form.elements[element].value = '';
+                                    }
+                                }
+                            }
+                            toastr.success('{{ translate 'tickets.form.success' }}');
+{{#if @plugins.simpleTicketsForm.config.recaptcha }}
+                        });
+{{/if}}
+                    })
+                ;
+            </script>
+        </div>
+    </div>
+</main>
+{{> footer}}
