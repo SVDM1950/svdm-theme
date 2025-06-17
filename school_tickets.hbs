@@ -2,8 +2,8 @@
 {{> navbar}}
 <main class="page page--tickets">
     <div class="content tickets-page">
-        <div class="hero {{#checkIfNone tickets.featuredImage.url}}hero--noimage{{/checkIfNone}}">
-            {{#tickets.featuredImage}}
+        <div class="hero {{#checkIfNone school_tickets.featuredImage.url}}hero--noimage{{/checkIfNone}}">
+            {{#school_tickets.featuredImage}}
                 {{#if url}}
                     <figure class="hero__image">
                         <div class="hero__image-wrapper">
@@ -26,46 +26,48 @@
                         {{/checkIfAny}}
                     </figure>
                 {{/if}}
-            {{/tickets.featuredImage}}
+            {{/school_tickets.featuredImage}}
 
             <header class="hero__content {{#checkIf @config.custom.alignHero '==' "center" }}hero__content--centered{{/checkIf}}">
                 <div class="wrapper">
-                    <h1>{{ translate 'tickets.title' }}</h1>
+                    <h1>{{ translate 'school_tickets.title' }}</h1>
                 </div>
             </header>
         </div>
 
         <div class="entry-wrapper content__entry">
-            {{#if tickets.text}}
-                {{{tickets.text}}}
+            {{#if school_tickets.text}}
+                {{{school_tickets.text}}}
             {{/if}}
-            <form action="{{ @plugins.simpleTicketsForm.config.script }}" method="post" id="tickets-form">
-                <p><label for="name">{{ translate 'tickets.form.fields.name' }}</label><input type="text" id="name" name="name" placeholder="{{ translate 'tickets.form.fields.name' }}"/></p>
-                <p><label for="email">{{ translate 'tickets.form.fields.email' }}</label><input type="email" id="email" name="email" placeholder="{{ translate 'tickets.form.fields.email' }}"/></p>
+            <form action="{{ @plugins.simpleSchoolTicketsForm.config.script }}" method="post" id="tickets-form">
+                <p><label for="name">{{ translate 'school_tickets.form.fields.name' }}</label><input type="text" id="name" name="name" placeholder="{{ translate 'school_tickets.form.fields.name' }}"/></p>
+                <p><label for="teacher">{{ translate 'school_tickets.form.fields.teacher' }}</label><input type="text" id="teacher" name="teacher" placeholder="{{ translate 'school_tickets.form.fields.teacher' }}"/></p>
+                <p><label for="class">{{ translate 'school_tickets.form.fields.class' }}</label><input type="text" id="class" name="class" placeholder="{{ translate 'school_tickets.form.fields.class' }}"/></p>
+                <p><label for="email">{{ translate 'school_tickets.form.fields.email' }}</label><input type="email" id="email" name="email" placeholder="{{ translate 'school_tickets.form.fields.email' }}"/></p>
                 <p>
-                    <label for="event">{{ translate 'tickets.form.fields.event' }}</label>
+                    <label for="event">{{ translate 'school_tickets.form.fields.event' }}</label>
                     <select id="event" name="event">
                         <option></option>
-                    {{#each tickets.events}}
+                    {{#each school_tickets.events}}
                         <option value="{{id}}"{{#checkIfAny sold closed}} disabled{{/checkIfAny}}>{{ date datetime 'llll' }} - {{name}}{{#if sold }} (ausverrkauft){{/if}}</option>
                     {{/each}}
                     </select>
                 </p>
-                <p><label for="message">{{ translate 'tickets.form.fields.message' }}</label><textarea id="message" name="message" placeholder="{{ translate 'tickets.form.fields.message' }}"></textarea></p>
-                <h2 class="h5">{{ translate 'tickets.form.headline.tickets' }}</h2>
+                <p><label for="message">{{ translate 'school_tickets.form.fields.message' }}</label><textarea id="message" name="message" placeholder="{{ translate 'school_tickets.form.fields.message' }}"></textarea></p>
+                <h2 class="h5">{{ translate 'school_tickets.form.headline.tickets' }}</h2>
                 <div class="form--tickets">
-                {{#each tickets.tickets}}
+                {{#each school_tickets.tickets}}
                     <p>
                     <label for="ticket_{{id}}">{{ name }} €{{ price }}{{#if note }}<span>{{ note }}</span>{{/if}}</label>
                         <input type="number" id="ticket_{{id}}" name="ticket[{{id}}]" min="0" value="0" />
                     </p>
                 {{/each}}
                 </div>
-                <p><button type="submit">{{ translate 'tickets.form.fields.send' }}</button></p>
+                <p><button type="submit">{{ translate 'school_tickets.form.fields.send' }}</button></p>
             </form>
 
-{{#if @plugins.simpleTicketsForm.config.recaptcha }}
-            <script src="https://www.google.com/recaptcha/enterprise.js?render={{ @plugins.simpleTicketsForm.config.recaptchaSiteKey }}"></script>
+{{#if @plugins.simpleSchoolTicketsForm.config.recaptcha }}
+            <script src="https://www.google.com/recaptcha/enterprise.js?render={{ @plugins.simpleSchoolTicketsForm.config.recaptchaSiteKey }}"></script>
 {{/if}}
             <script src="{{ js "jquery.min.js" }}"></script>
             <script src="{{ js "toastr.min.js" }}"></script>
@@ -101,13 +103,13 @@
 
                 const ticketValidator = (value, fields) => {
                     if (true
-                    {{#each tickets.tickets}}
+                    {{#each school_tickets.tickets}}
                         && fields['#ticket_{{id}}']
                         && fields['#ticket_{{id}}'].elem
                     {{/each}}
                     ) {
                         return [
-                            {{#each tickets.tickets}}
+                            {{#each school_tickets.tickets}}
                                 parseInt(fields['#ticket_{{id}}'].elem.value),
                             {{/each}}
                         ].reduce((sum, value) => sum + value, 0) > 0;
@@ -116,86 +118,138 @@
                     return true;
                 };
 
+                {{!-- const supervisorValidator = (value, fields) => {
+                    // Check if supervisors field exists and has a value
+                    if (fields['#ticket_supervisors'] && fields['#ticket_supervisors'].elem) {
+                        const supervisorsValue = parseInt(fields['#ticket_supervisors'].elem.value) || 0;
+                        
+                        // Supervisors must not be 0
+                        if (supervisorsValue === 0) {
+                            return false;
+                        }
+                        
+                        // Check if students field exists
+                        if (fields['#ticket_students'] && fields['#ticket_students'].elem) {
+                            const studentsValue = parseInt(fields['#ticket_students'].elem.value) || 0;
+                            const minSupervisors = Math.floor(studentsValue / 10);
+                            
+                            // Supervisors must be at least students/10 (rounded down)
+                            return supervisorsValue >= minSupervisors;
+                        }
+                    }
+                    
+                    return true;
+                }; --}}
+
                 validation
                     .addField('#name', [
                         {
                             rule: 'required',
-                            errorMessage: '{{ translate 'tickets.form.errors.name.required' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.name.required' }}',
                         },
                         {
                             rule: 'minLength',
                             value: 3,
-                            errorMessage: '{{ translate 'tickets.form.errors.name.min-length' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.name.min-length' }}',
+                        },
+                    ])
+                    .addField('#teacher', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.teacher.required' }}',
+                        },
+                        {
+                            rule: 'minLength',
+                            value: 3,
+                            errorMessage: '{{ translate 'school_tickets.form.errors.teacher.min-length' }}',
+                        },
+                    ])
+                    .addField('#class', [
+                        {
+                            rule: 'required',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.class.required' }}',
+                        },
+                        {
+                            rule: 'minLength',
+                            value: 2,
+                            errorMessage: '{{ translate 'school_tickets.form.errors.class.min-length' }}',
                         },
                     ])
                     .addField('#email', [
                         {
                             rule: 'required',
-                            errorMessage: '{{ translate 'tickets.form.errors.email.required' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.email.required' }}',
                         },
                         {
                             rule: 'email',
-                            errorMessage: '{{ translate 'tickets.form.errors.email.invalid' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.email.invalid' }}',
                         },
                     ])
                     .addField('#event', [
                         {
                             rule: 'required',
-                            errorMessage: '{{ translate 'tickets.form.errors.event.required' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.event.required' }}',
                         },
                     ])
                     .addField('#message', [
                         {
                             rule: 'minLength',
                             value: 10,
-                            errorMessage: '{{ translate 'tickets.form.errors.message.min-length' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.message.min-length' }}',
                         },
                     ])
-                    {{#each tickets.tickets}}
+                    {{#each school_tickets.tickets}}
                     .addField('#ticket_{{id}}', [
                         {
                             rule: 'required',
-                            errorMessage: '{{ translate 'tickets.form.errors.tickets.required' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.tickets.required' }}',
                         },
                         {
                             rule: 'integer',
-                            errorMessage: '{{ translate 'tickets.form.errors.tickets.integer' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.tickets.integer' }}',
                         },
                         {
                             rule: 'minNumber',
-                            value: 0,
-                            errorMessage: '{{ translate 'tickets.form.errors.tickets.min-number' }}',
+                            value: 1,
+                            errorMessage: '{{ translate 'school_tickets.form.errors.tickets.min-number' }}',
                         }
+                        {{!-- {{#checkIf id '==' 'supervisors'}},
+                        {
+                            validator: supervisorValidator,
+                            errorMessage: 'Aufsichtspersonen dürfen nicht 0 sein und müssen mindestens der Anzahl Schüler/10 (abgerundet) entsprechen',
+                        }{{/checkIf}} --}}
                     ])
                     {{/each}}
-                    .addField('.form--tickets', [
+                    {{!-- .addField('.form--tickets', [
                         {
                             validator: ticketValidator,
-                            errorMessage: '{{ translate 'tickets.form.errors.tickets.least-one' }}',
+                            errorMessage: '{{ translate 'school_tickets.form.errors.tickets.least-one' }}',
                         }
                     ],
                     {
                         tooltip: {
                             position: 'top',
                         },
-                    })
+                    }) --}}
                     .onSuccess(async event => {
                         const form = event.currentTarget;
-                        const url = '{{ @plugins.simpleTicketsForm.config.script }}'
+                        const url = '{{ @plugins.simpleSchoolTicketsForm.config.script }}'
                         const data = {
                             "name": form.elements.name.value,
+                            "teacher": form.elements.teacher.value,
+                            "class": form.elements.class.value,
                             "email": form.elements.email.value,
                             "message": form.elements.message.value,
                             "event": form.elements.event.value,
                             "tickets": {
-                            {{#each tickets.tickets}}
+                            {{#each school_tickets.tickets}}
                                 "{{id}}": form.elements['ticket_{{id}}'].value,
                             {{/each}}
                             }
                         };
-{{#if @plugins.simpleTicketsForm.config.recaptcha }}
+{{#if @plugins.simpleSchoolTicketsForm.config.recaptcha }}
                         grecaptcha.enterprise.ready(async () => {
-                            data["{{ @plugins.simpleTicketsForm.config.recaptchaParameterName }}"] = await grecaptcha.enterprise.execute('{{ @plugins.simpleTicketsForm.config.recaptchaSiteKey }}', {action: '{{ @plugins.simpleTicketsForm.config.recaptchaActionName }}'});
+                            data["{{ @plugins.simpleSchoolTicketsForm.config.recaptchaParameterName }}"] = await grecaptcha.enterprise.execute('{{ @plugins.simpleSchoolTicketsForm.config.recaptchaSiteKey }}', {action: '{{ @plugins.simpleSchoolTicketsForm.config.recaptchaActionName }}'});
 {{/if}}
                             try {
                                 const fetchResponse = await fetch(
@@ -218,31 +272,35 @@
                                             let errors = {};
                                             const messages = {
                                                 'name': {
-                                                    'required': '{{ translate 'tickets.form.errors.name.required' }}',
-                                                    'min': '{{ translate 'tickets.form.errors.name.min-length' }}'
+                                                    'required': '{{ translate 'school_tickets.form.errors.name.required' }}',
+                                                    'min': '{{ translate 'school_tickets.form.errors.name.min-length' }}'
                                                 },
-                                                'email': {
-                                                    'required': '{{ translate 'tickets.form.errors.email.required' }}',
-                                                    'invalid': '{{ translate 'tickets.form.errors.email.invalid' }}'
+                                                'teacher': {
+                                                    'required': '{{ translate 'school_tickets.form.errors.teacher.required' }}',
+                                                    'min': '{{ translate 'school_tickets.form.errors.teacher.min-length' }}'
+                                                },
+                                                'class': {
+                                                    'required': '{{ translate 'school_tickets.form.errors.class.required' }}',
+                                                    'invalid': '{{ translate 'school_tickets.form.errors.class.invalid' }}'
                                                 },
                                                 'event': {
-                                                    'required': '{{ translate 'tickets.form.errors.event.required' }}'
+                                                    'required': '{{ translate 'school_tickets.form.errors.event.required' }}'
                                                 },
                                                 'message': {
-                                                    'min': '{{ translate 'tickets.form.errors.message.min-length' }}'
+                                                    'min': '{{ translate 'school_tickets.form.errors.message.min-length' }}'
                                                 },
                                                 'tickets': {
-                                                    'required': '{{ translate 'tickets.form.errors.tickets.required' }}',
-                                                    'integer': '{{ translate 'tickets.form.errors.tickets.integer' }}',
-                                                    'min': '{{ translate 'tickets.form.errors.tickets.min-number' }}',
-                                                    'least': '{{ translate 'tickets.form.errors.tickets.least-one' }}',
-                                                    'invalid': '{{ translate 'tickets.form.errors.tickets.invalid' }}'
+                                                    'required': '{{ translate 'school_tickets.form.errors.tickets.required' }}',
+                                                    'integer': '{{ translate 'school_tickets.form.errors.tickets.integer' }}',
+                                                    'min': '{{ translate 'school_tickets.form.errors.tickets.min-number' }}',
+                                                    'least': '{{ translate 'school_tickets.form.errors.tickets.least-one' }}',
+                                                    'invalid': '{{ translate 'school_tickets.form.errors.tickets.invalid' }}'
                                                 },
                                             };
 
                                             if ('g-recaptcha-response' in result.errors) {
                                                 delete result.errors['g-recaptcha-response']
-                                                toastr.error('{{ translate 'tickets.form.errors.recaptcha' }}');
+                                                toastr.error('{{ translate 'school_tickets.form.errors.recaptcha' }}');
                                             }
 
                                             for (const [key, value] of Object.entries(result.errors)) {
@@ -252,24 +310,24 @@
                                             return;
 
                                         case 'general':
-                                            toastr.error('{{ translate 'tickets.form.errors.general' }}');
+                                            toastr.error('{{ translate 'school_tickets.form.errors.general' }}');
                                             return;
 
                                         case 'mail':
-                                            toastr.error('{{ translate 'tickets.form.errors.mail' }}');
+                                            toastr.error('{{ translate 'school_tickets.form.errors.mail' }}');
                                             return;
                                         case 'recaptcha':
-                                            toastr.error('{{ translate 'tickets.form.errors.recaptcha' }}');
+                                            toastr.error('{{ translate 'school_tickets.form.errors.recaptcha' }}');
                                             return;
 
                                         default:
-                                            toastr.error('{{ translate 'tickets.form.errors.general' }}');
+                                            toastr.error('{{ translate 'school_tickets.form.errors.general' }}');
                                             return;
                                     }
 
                                 }
                             } catch (exception) {
-                                toastr.error('{{ translate 'tickets.form.errors.general' }}');
+                                toastr.error('{{ translate 'school_tickets.form.errors.general' }}');
                                 return;
                             }
 
@@ -282,8 +340,8 @@
                                     }
                                 }
                             }
-                            toastr.success('{{ translate 'tickets.form.success' }}');
-{{#if @plugins.simpleTicketsForm.config.recaptcha }}
+                            toastr.success('{{ translate 'school_tickets.form.success' }}');
+{{#if @plugins.simpleSchoolTicketsForm.config.recaptcha }}
                         });
 {{/if}}
                     })

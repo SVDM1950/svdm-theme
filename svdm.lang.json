@@ -158,5 +158,62 @@
                 }
             }
         }
+    },
+
+    "school_tickets": {
+        "title": "School tickets",
+        "menu": {
+            "label": "School tickets",
+            "title": "School tickets",
+            "slug": "school_tickets"
+        },
+        "form": {
+            "fields": {
+                "name": "School name",
+                "teacher": "Contact person",
+                "class": "class",
+                "email": "Email",
+                "event": "Event",
+                "message": "Message",
+                "send": "Send"
+            },
+            "headline": {
+                "tickets": "Tickets"
+            },
+            "success": "Thank you for your school ticket reservation. We will contact you shortly.",
+            "errors": {
+                "general": "An error occurred while sending the message",
+                "mail": "An error occurred while sending the message",
+                "recaptcha": "Error during the Google reCAPTCHA verification process",
+                "name": {
+                    "required": "The school name is required",
+                    "min-length": "The school name must contain a minimum of :value characters"
+                },
+                "teacher": {
+                    "required": "The contact person is required",
+                    "min-length": "The contact person must contain a minimum of :value characters"
+                },
+                "class": {
+                    "required": "The class is required",
+                    "min-length": "The cclass must contain a minimum of :value characters"
+                },
+                "email": {
+                    "required": "The email is required",
+                    "invalid": "The email is invalid"
+                },
+                "event": {
+                    "required": "Please select an event to attend"
+                },
+                "message": {
+                    "min-length": "The message must contain a minimum of :value characters"
+                },
+                "tickets": {
+                    "required": "Number of tickets required",
+                    "integer": "Ticket count must be a positive integer.",
+                    "min-number": "Ticket count must be a positive integer.",
+                    "least-one": "Please select at least one ticket to purchase"
+                }
+            }
+        }
     }
 }

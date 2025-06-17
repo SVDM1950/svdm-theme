@@ -34,6 +34,9 @@
         {{#is "tickets"}}
             <link rel="stylesheet" href="{{ css "toastr.min.css" }}" />
         {{/is}}
+        {{#is "school_tickets"}}
+            <link rel="stylesheet" href="{{ css "toastr.min.css" }}" />
+        {{/is}}
         {{#checkIfAny post.hasGallery page.hasGallery}}
             <link rel="stylesheet" href="{{css "photoswipe.css" }}">
         {{/checkIfAny}}
